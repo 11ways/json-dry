@@ -1,0 +1,13 @@
+{
+	"name": "json-dry",
+	"description": "JSON generator & parser with circular, date and regex support",
+	"version": "0.1.0",
+	"author": "Jelle De Loecker <jelle@codedor.be>",
+	"keywords": ["json", "circular", "serialization", "deserialization"],
+	"main": "./lib/json-dry.js",
+	"repository": "git@github.com:skerit/json-dry.git",
+	"license": "MIT",
+	"engines": {
+		"node": ">=0.8"
+	}
+}
