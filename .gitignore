@@ -1,0 +1,24 @@
+# Ignore IDE specific files
+*.komodo*
+*.sublime*
+.idea/
+
+# Ignore special files
+.DS_Store
+.fuse*
+._*
+*.bin
+
+# Ignore log files
+npm-debug.log
+v8.log
+
+# Ignore node modules
+/node_modules/
+
+# Ignore local test files
+scratch*
+
+# Ignore coverage results
+/coverage/
+.coveralls.yml
