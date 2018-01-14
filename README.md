@@ -1,34 +1,65 @@
-JSON-dry
-========
+# JSON-dry
 
 JSON-dry allows you to stringify objects containing circular references,
-dates and regexes.
+dates, regexes, ...
 
-Multiple references to the same object are also correctly converted.
+It can also be used to serialize and revive instances of your own classes.
 
-JSON-dry is based on circular-json
+## Installation
 
+    $ npm install json-dry
 
-# Usage
+## Usage
+
+This is a basic example of stringifying an object (containing multiple references to the same object) and parsing it again.
 
 ```js
-var dry = require('json-dry'),
-    obj,
-    ref;
+var Dry = require('json-dry');
 
-ref = {
-	text: 'This object is referred to',
-	number: 1,
-	date: new Date(),
-	regex: /test/i
+// The object we'll serialize later
+var obj = {};
+
+// The object we'll make multiple references to
+var ref = {
+    date  : new Date(),
+    regex : /test/i
 };
 
-obj = {
-	alpha: 'test',
-	extra: ref,
-	again: ref,
-	three: ref
-};
+// Now we'll make multiple references:
+// `reference_one` and `reference_two` both point to the same object
+// `date` refers to a `Date` object
+obj.reference_one = ref;
+obj.reference_two = ref;
+obj.date = ref.date;
 
-dry.stringify(obj);
+// Stringify the object
+var dried = Dry.stringify(obj);
+// {
+//     "reference_one": {
+//         "date": {
+//             "dry": "date",
+//             "value": "2018-01-14T17:45:57.989Z"
+//         },
+//         "regex": {
+//             "dry": "regexp",
+//             "value": "/test/i"
+//         }
+//     },
+//     "reference_two": "~reference_one",
+//     "date": "~reference_one~date"
+// }
+
+// Now we'll revive it again
+var undried = Dry.parse(dried);
+// { reference_one: { date: 2018-01-14T17:56:43.149Z, regex: /test/i },
+//   reference_two: { date: 2018-01-14T17:56:43.149Z, regex: /test/i },
+//   date: 2018-01-14T17:58:50.427Z }
+
+// See if they're the same objects (as it should)
+undried.reference_one == undried.reference_two;
+// true
+
+// The date outside of the reference object is also the same reference
+undried.reference_one.date == undried.date;
+// true
 ```
