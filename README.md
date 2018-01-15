@@ -11,6 +11,8 @@ It can also be used to serialize and revive instances of your own classes.
 
 ## Usage
 
+### Basic example
+
 This is a basic example of stringifying an object (containing multiple references to the same object) and parsing it again.
 
 ```js
@@ -62,4 +64,70 @@ undried.reference_one == undried.reference_two;
 // The date outside of the reference object is also the same reference
 undried.reference_one.date == undried.date;
 // true
+```
+
+### Reviving instances
+
+Let's create an example class you might want to serialize and revive:
+
+```js
+// The class constructor
+function Person(options) {
+    this.firstname = options.firstname;
+    this.lastname = options.lastname;
+}
+
+// A simple method that prints out the full name
+Person.prototype.fullname = function fullname() {
+    return this.firstname + ' ' + this.lastname;
+};
+
+// Create an object
+var jelle = new Person({firstname: 'Jelle', lastname: 'De Loecker'});
+
+// Test out the fullname method
+jelle.fullname();
+// returns "Jelle De Loecker"
+```
+
+So now we've created a very basic class, let's register the class and add the **2** required methods for serializing & reviving.
+
+```js
+// We need to register the class
+Dry.registerClass(Person);
+
+// Add the `toDry` method that will be called upon when serializing/stringifying
+Person.prototype.toDry = function toDry() {
+    return {
+        value: {
+            firstname : this.firstname,
+            lastname  : this.lastname
+        }
+    };
+};
+
+// Now add the `unDry` method as a **static** method, on the constructor
+Person.unDry = function unDry(value) {
+    // How you do this is up to you.
+    // You can call the constructor for this simple class,
+    // or you can use Object.create, ...
+    var result = new Person(value);
+    return result;
+};
+```
+
+Now let's try stringifying it:
+
+```js
+var dried = Dry.stringify(jelle);
+// {"value":{"firstname":"Jelle","lastname":"De Loecker"},"dry_class":"Person","dry":"toDry","drypath":[]}
+
+// And parse it again
+var undried = Dry.parse(dried);
+// Person { firstname: 'Jelle', lastname: 'De Loecker' }
+
+// And it works
+undried.fullname();
+// returns "Jelle De Loecker"
+
 ```
