@@ -70,6 +70,86 @@ describe('Dry', function TestDry() {
 			assert.equal(ntemp.nonroot.path, '__Protoblast.Classes.Deck');
 		});
 
+		it('should serialize & revive registered classes', function() {
+
+			var original,
+			    dried,
+			    res;
+
+			function Person(firstname, lastname) {
+				this.firstname = firstname;
+				this.lastname  = lastname;
+			}
+
+			Person.unDry = function unDry(value) {
+				return new Person(value.firstname, value.lastname);
+			};
+
+			Person.prototype.toDry = function toDry() {
+				return {
+					value: {
+						firstname : this.firstname,
+						lastname  : this.lastname
+					}
+				};
+			};
+
+			Person.prototype.fullname = function fullname() {
+				return this.firstname + ' ' + this.lastname;
+			};
+
+			Dry.registerClass(Person);
+
+			original = new Person('Lies', 'Lefever');
+
+			dried = Dry.stringify(original);
+
+			res = Dry.parse(dried);
+
+			assert.equal(res.fullname(), original.fullname());
+		});
+
+		it('should use registered driers', function() {
+
+			var original,
+			    dried,
+			    res;
+
+			function MyPerson(firstname, lastname) {
+				this.firstname = firstname;
+				this.lastname  = lastname;
+			}
+
+			MyPerson.prototype.fullname = function fullname() {
+				return this.firstname + ' ' + this.lastname;
+			};
+
+			Dry.registerDrier('MyPerson', function dryMyPerson(holder, key, value) {
+				return {
+					firstname : value.firstname,
+					lastname  : value.lastname
+				};
+			});
+
+			Dry.registerUndrier('MyPerson', function unDryMyPerson(holder, key, value) {
+				return new MyPerson(value.firstname, value.lastname);
+			});
+
+			original = new MyPerson('Lies', 'Lefever');
+
+			dried = Dry.stringify(original);
+			res = Dry.parse(dried);
+
+			assert.equal(res.fullname(), original.fullname());
+
+			// Also for root array
+			dried = Dry.stringify([original]);
+			res = Dry.parse(dried);
+
+			assert.equal(res[0].fullname(),  original.fullname());
+			assert.equal(Array.isArray(res), true);
+		});
+
 		it('should handle #toJSON calls properly', function() {
 
 			var undried,
@@ -133,6 +213,61 @@ describe('Dry', function TestDry() {
 			assert.equal(res.start.regular_string, '~start');
 			assert.equal(res.regular_string,       '~start');
 			assert.equal(res.ref,                  res.start);
+		});
+
+		it('should handle keys with the path separator', function() {
+
+			var expected,
+			    original,
+			    dried,
+			    res;
+
+			original = {
+				'start~': {
+					a: 1
+				}
+			};
+
+			original.ref = original['start~'];
+
+			dried = Dry.stringify(original);
+
+			res = Dry.parse(dried);
+
+			expected = `{"start~":{"a":1},"ref":"~start\\\\x7e"}`;
+
+			assert.equal(dried,            expected);
+			assert.equal(res['start~'].a,  1);
+			assert.equal(res.ref,          res['start~']);
+		});
+
+		it('should use shorter paths when possible', function() {
+
+			var expected,
+			    original,
+			    dried,
+			    res;
+
+			original = {
+				a_very_long_key: {
+					a: 1
+				},
+			};
+
+			original.short = original.a_very_long_key;
+			original['s~'] = original.a_very_long_key;
+			original.third = original.a_very_long_key;
+
+			dried = Dry.stringify(original);
+
+			res = Dry.parse(dried);
+
+			expected = `{"a_very_long_key":{"a":1},"short":"~a_very_long_key","s~":"~short","third":"~s\\\\x7e"}`;
+
+			assert.equal(dried,               expected);
+			assert.equal(res.short, res.a_very_long_key);
+			assert.equal(res.third, res.a_very_long_key);
+			assert.equal(res['s~'], res.a_very_long_key);
 		});
 
 		it('should use a replacer if given', function() {
