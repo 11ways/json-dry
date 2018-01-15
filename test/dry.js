@@ -391,7 +391,7 @@ describe('Dry', function TestDry() {
 		});
 	});
 
-	describe('.undry()', function() {
+	describe('.parse()', function() {
 
 		it('should parse circular references', function() {
 
@@ -498,6 +498,25 @@ describe('Dry', function TestDry() {
 			assert.equal(driedtwo, '{"a":"\\\\x7eThis is ~not~ undefined"}', 'Special chars at the start should be escaped');
 			assert.equal(dried, JSON.stringify(input), 'Special chars should not be escaped in a regular string');
 			assert.equal(undried, input);
+		});
+
+		it('should prevent getting keys out of the prototype', function() {
+
+			var dried,
+			    obj,
+			    res;
+
+			obj = {
+				start: {},
+				ref  : '~start~__proto__~constructor'
+			};
+
+			// Use regular json for this hack
+			dried = JSON.stringify(obj);
+
+			res = Dry.parse(dried);
+
+			assert.equal(res.ref, undefined);
 		});
 	});
 
