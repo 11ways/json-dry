@@ -1,7 +1,7 @@
 {
 	"name": "json-dry",
 	"description": "Don't repeat yourself, JSON: Add support for (circular) references, class instances, ...",
-	"version": "1.0.0",
+	"version": "1.0.1-alpha",
 	"author": "Jelle De Loecker <jelle@develry.be>",
 	"keywords": [
 		"json",
@@ -18,11 +18,13 @@
 	},
 	"license": "MIT",
 	"devDependencies": {
+		"coveralls"  : "^2.11.6",
 		"istanbul"   : "^0.4.5",
 		"mocha"      : "1.20.x",
 		"protoblast" : "skerit/protoblast#3218106"
 	},
 	"engines": {
 		"node": ">=6.4"
-	}
+	},
+	"private": true
 }
