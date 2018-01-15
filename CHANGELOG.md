@@ -1,4 +1,4 @@
-## 1.0.0 (WIP)
+## 1.0.0 (2018-01-15)
 
 * Rewrite code, take over new features from the `protoblast` package
 * `WeakMap` is now used instead of multiple `Array` objects
