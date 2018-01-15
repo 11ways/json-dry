@@ -3,10 +3,25 @@
 	"description": "Don't repeat yourself, JSON: Add support for (circular) references, class instances, ...",
 	"version": "1.0.0-alpha",
 	"author": "Jelle De Loecker <jelle@develry.be>",
-	"keywords": ["json", "circular", "serialization", "deserialization"],
+	"keywords": [
+		"json",
+		"circular",
+		"serialization",
+		"deserialization"
+	],
 	"main": "./lib/json-dry.js",
 	"repository": "git@github.com:skerit/json-dry.git",
+	"scripts": {
+		"test"            : "node_modules/.bin/mocha --reporter spec",
+		"coverage"        : "./node_modules/istanbul/lib/cli.js cover _mocha",
+		"report-coverage" : "cat ./coverage/lcov.info | coveralls"
+	},
 	"license": "MIT",
+	"devDependencies": {
+		"istanbul"   : "^0.4.5",
+		"mocha"      : "1.20.x",
+		"protoblast" : "~0.4.1"
+	},
 	"engines": {
 		"node": ">=6.4"
 	}
