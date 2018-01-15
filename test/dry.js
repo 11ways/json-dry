@@ -338,11 +338,8 @@ describe('Dry', function TestDry() {
 			dry_obj = Dry.toObject(original);
 			result = Dry.parse(dry_obj);
 
-			console.log(original);
-			console.log(result)
-
 			assert.notEqual(dry_obj.deck.value.dict.entry.value, entry, 'Same references detected!');
-			assert.equal(Blast.Bound.Object.alike(original, result), true);
+			assert.equal(Blast.Bound.Object.alike(original, result), true, 'The 2 objects should be similar');
 		});
 	});
 
