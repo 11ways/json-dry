@@ -1,4 +1,5 @@
 # JSON-dry
+==========
 
 [![NPM version](http://img.shields.io/npm/v/json-dry.svg)](https://npmjs.org/package/json-dry) 
 [![Build Status](https://travis-ci.org/skerit/json-dry.svg?branch=master)](https://travis-ci.org/skerit/json-dry)
@@ -9,11 +10,29 @@ dates, regexes, ...
 
 It can also be used to serialize and revive instances of your own classes.
 
+## Table of contents
+====================
+
+  * [Installation](#installation)
+  * [Usage](#usage)
+    * [Basic example](#basic-example)
+    * [Implementing methods for serializing & reviving instances](#implementing-methods-for-serializing--reviving-instances)
+    * [toObject](#toobject)
+  * [Cloning objects & instances](#cloning-objects--instances)
+    * [Clone methods](#clone-methods)
+      * [dryClone](#dryclone)
+      * [Custom clone methods](#custom-clone-methods)
+  * [Versioning](#versioning)
+  * [License](#license)
+  * [Acknowledgments](#acknowledgments)
+
 ## Installation
+===============
 
     $ npm install json-dry
 
 ## Usage
+========
 
 ### Basic example
 
@@ -70,7 +89,7 @@ undried.reference_one.date == undried.date;
 // true
 ```
 
-### Reviving instances
+### Implementing methods for serializing & reviving instances
 
 Let's create an example class you might want to serialize and revive:
 
@@ -144,6 +163,7 @@ In fact: `Dry.stringify` is just a function that performs `JON.stringify` on `Dr
 **Why would you want to use this?** Things like `Workers` and `IndexedDB` communicate data using the [structured clone algorithm](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm). So instead of performing expensive stringify operations you can just use these objects.
 
 ## Cloning objects & instances
+==============================
 
 JSON-Dry offers a specialized `clone` method. While in theory you could clone an object by drying end reviving it, like so:
 
@@ -192,3 +212,18 @@ var special_clone = Dry.clone(jelle, 'specialOccasionClone');
 special_clone.fullname();
 // Returns "J. De Loecker"
 ```
+
+## Versioning
+=============
+
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
+
+## License
+==========
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+
+## Acknowledgments
+==================
+
+Many thanks to [WebReflection](https://github.com/WebReflection/), whose [circular-json](https://github.com/WebReflection/circular-json) was the basis for earlier versions of this project.
