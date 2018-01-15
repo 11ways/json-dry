@@ -129,5 +129,54 @@ var undried = Dry.parse(dried);
 // And it works
 undried.fullname();
 // returns "Jelle De Loecker"
+```
 
+## Cloning objects & instances
+
+JSON-Dry offers a specialized `clone` method. While in theory you could clone an object by drying end reviving it, like so:
+
+```js
+var cloned = Dry.parse(Dry.toObject(jelle))
+```
+
+This is 14x slower than using `clone`, because `toObject` needs to generate paths, escape certain string values and create wrapper objects. These expensive things can be ignored when cloning:
+
+```js
+var cloned = Dry.clone(jelle);
+```
+
+### Clone methods
+
+If you've added a `toDry` and `unDry` method to your class, by default the `clone` method will use those to create the clone.
+
+However, you can also create another method that gets precedence:
+
+#### dryClone
+
+```js
+Person.prototype.dryClone = function dryClone(seen_map, custom_method) {
+    return new Person({
+        firstname : this.firstname,
+        lastname  : this.lastname
+    });
+}    
+```
+
+#### Custom clone methods
+
+The `clone` method takes an extra parameter called `custom_method`. If you're cloning something that has a function property with the same name, that'll be used.
+
+This can be used when you want to redact certain parts, for example:
+
+```js
+Person.prototype.specialOccasionClone = function specialOccasionClone(seen_map, custom_method) {
+    return new Person({
+        firstname : this.firstname[0] + '.', // Only add the first letter of the name
+        lastname  : this.lastname
+    });
+};
+
+var special_clone = Dry.clone(jelle, 'specialOccasionClone');
+special_clone.fullname();
+// Returns "J. De Loecker"
 ```
