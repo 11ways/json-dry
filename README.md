@@ -21,6 +21,7 @@ It can also be used to serialize and revive instances of your own classes.
     * [Clone methods](#clone-methods)
       * [dryClone](#dryclone)
       * [Custom clone methods](#custom-clone-methods)
+  * [Project history](#project-history)
   * [Versioning](#versioning)
   * [License](#license)
   * [Acknowledgments](#acknowledgments)
