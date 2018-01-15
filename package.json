@@ -20,7 +20,7 @@
 	"devDependencies": {
 		"istanbul"   : "^0.4.5",
 		"mocha"      : "1.20.x",
-		"protoblast" : "~0.4.1"
+		"protoblast" : "skerit/protoblast#3218106"
 	},
 	"engines": {
 		"node": ">=6.4"

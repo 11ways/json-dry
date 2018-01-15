@@ -1,5 +1,9 @@
 # JSON-dry
 
+[![NPM version](http://img.shields.io/npm/v/json-dry.svg)](https://npmjs.org/package/json-dry) 
+[![Build Status](https://travis-ci.org/skerit/json-dry.svg?branch=master)](https://travis-ci.org/skerit/json-dry)
+[![Coverage Status](https://coveralls.io/repos/github/skerit/json-dry/badge.svg?branch=master)](https://coveralls.io/github/skerit/json-dry?branch=master)
+
 JSON-dry allows you to stringify objects containing circular references,
 dates, regexes, ...
 
@@ -130,6 +134,14 @@ var undried = Dry.parse(dried);
 undried.fullname();
 // returns "Jelle De Loecker"
 ```
+
+### toObject
+
+While `Dry.stringify` will return you with a json-valid string, `Dry.toObject` will give you a valid simplified object.
+
+In fact: `Dry.stringify` is just a function that performs `JON.stringify` on `Dry.toObject`'s output.
+
+**Why would you want to use this?** Things like `Workers` and `IndexedDB` communicate data using the [structured clone algorithm](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm). So instead of performing expensive stringify operations you can just use these objects.
 
 ## Cloning objects & instances
 
