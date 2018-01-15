@@ -107,6 +107,59 @@ describe('Dry', function TestDry() {
 			assert.equal(undried.b, 1, 'Other property did not revive');
 		});
 
+		it('should escape strings starting with the path separator', function() {
+
+			var expected,
+			    original,
+			    dried,
+			    res;
+
+			original = {
+				start : {
+					regular_string: '~start'
+				},
+				regular_string   : '~start',
+			};
+
+			original.ref = original.start;
+
+			dried = Dry.stringify(original);
+
+			res = Dry.parse(dried);
+
+			expected = `{"start":{"regular_string":"\\\\x7estart"},"regular_string":"\\\\x7estart","ref":"~start"}`;
+
+			assert.equal(dried,                    expected);
+			assert.equal(res.start.regular_string, '~start');
+			assert.equal(res.regular_string,       '~start');
+			assert.equal(res.ref,                  res.start);
+		});
+
+		it('should use a replacer if given', function() {
+
+			var original,
+			    dried,
+			    res;
+
+			original = {
+				deck : new Deck(),
+				fnc  : function someFunction(){},
+				str  : ''
+			};
+
+			dried = Dry.stringify(original, function replacer(key, value) {
+				if (typeof value == 'function') {
+					return "a function called '" + value.name + "'";
+				}
+
+				return value;
+			});
+
+			var expected = `{"deck":{"value":{"ic":0,"dict":{},"array":[],"attributes":{}},"path":"__Protoblast.Classes.Deck","dry":"toDry","drypath":["deck"]},"fnc":"a function called 'someFunction'","str":""}`;
+
+			assert.equal(dried, expected);
+		});
+
 		it('should use formatting spaces if given', function() {
 
 			var expected,
@@ -338,8 +391,8 @@ describe('Dry', function TestDry() {
 			dry_obj = Dry.toObject(original);
 			result = Dry.parse(dry_obj);
 
-			assert.notEqual(dry_obj.deck.value.dict.entry.value, entry, 'Same references detected!');
-			assert.equal(Blast.Bound.Object.alike(original, result), true, 'The 2 objects should be similar');
+			assert.notEqual(dry_obj.deck.value.dict.entry.value,     entry, 'Same references detected!');
+			assert.equal(Blast.Bound.Object.alike(original, result), true,  'The parsed object should be similar to the original');
 		});
 	});
 
