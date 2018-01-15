@@ -1,5 +1,4 @@
 # JSON-dry
-==========
 
 [![NPM version](http://img.shields.io/npm/v/json-dry.svg)](https://npmjs.org/package/json-dry) 
 [![Build Status](https://travis-ci.org/skerit/json-dry.svg?branch=master)](https://travis-ci.org/skerit/json-dry)
@@ -10,8 +9,8 @@ dates, regexes, ...
 
 It can also be used to serialize and revive instances of your own classes.
 
+
 ## Table of contents
-====================
 
   * [Installation](#installation)
   * [Usage](#usage)
@@ -26,13 +25,13 @@ It can also be used to serialize and revive instances of your own classes.
   * [License](#license)
   * [Acknowledgments](#acknowledgments)
 
+
 ## Installation
-===============
 
     $ npm install json-dry
 
+
 ## Usage
-========
 
 ### Basic example
 
@@ -88,6 +87,7 @@ undried.reference_one == undried.reference_two;
 undried.reference_one.date == undried.date;
 // true
 ```
+
 
 ### Implementing methods for serializing & reviving instances
 
@@ -154,6 +154,7 @@ undried.fullname();
 // returns "Jelle De Loecker"
 ```
 
+
 ### toObject
 
 While `Dry.stringify` will return you with a json-valid string, `Dry.toObject` will give you a valid simplified object.
@@ -162,8 +163,8 @@ In fact: `Dry.stringify` is just a function that performs `JON.stringify` on `Dr
 
 **Why would you want to use this?** Things like `Workers` and `IndexedDB` communicate data using the [structured clone algorithm](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm). So instead of performing expensive stringify operations you can just use these objects.
 
+
 ## Cloning objects & instances
-==============================
 
 JSON-Dry offers a specialized `clone` method. While in theory you could clone an object by drying end reviving it, like so:
 
@@ -177,11 +178,13 @@ This is 14x slower than using `clone`, because `toObject` needs to generate path
 var cloned = Dry.clone(jelle);
 ```
 
+
 ### Clone methods
 
 If you've added a `toDry` and `unDry` method to your class, by default the `clone` method will use those to create the clone.
 
 However, you can also create another method that gets precedence:
+
 
 #### dryClone
 
@@ -193,6 +196,7 @@ Person.prototype.dryClone = function dryClone(seen_map, custom_method) {
     });
 }    
 ```
+
 
 #### Custom clone methods
 
@@ -213,17 +217,33 @@ special_clone.fullname();
 // Returns "J. De Loecker"
 ```
 
+## Project history
+
+Earlier versions of the project were heavily based on [circular-json](https://github.com/WebReflection/circular-json), a small library that adds (circular) reference support to JSON.
+
+A lot of the JavaScript code on my websites was already shared between the server & client side, but I also wanted an easy way of sending data to the client while retaining references & class instances, so I started adding features to circular-json and called it `json-dry` (*dry* as in *don't repeat yourself*).
+
+After version 0.1.6 I integrated `json-dry` into my [protoblast](https://github.com/skerit/protoblast) library, and development continued in there. But now it has deserved its own repository once again.
+
+This version is a rewrite of earlier versions. `circular-json` used (and still uses) multiple arrays to keep track of already used objects, but `json-dry` now uses `WeakMap`s, something that makes the code easier to maintain and is also faster.
+
+`circular-json` was also implemented as a `replacer` and `reviver` function to `JSON.stringify` and `JSON.parse` respectively. `json-dry` actually creates a new object before `stringifying` it.
+
+Because multiple references are represented as `~paths~to~the~first~reference`, the size of the JSON string can be a lot smaller. Can be, though, because sometimes reference paths are longer than the object they are refering to.
+
+Because of this, as soon as `json-dry` encounters a new path that is smaller than the previous one, it'll use that in the future. This helps a bit, though more improvements could be made in the future.
+
+
 ## Versioning
-=============
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
 
+
 ## License
-==========
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
+
 ## Acknowledgments
-==================
 
 Many thanks to [WebReflection](https://github.com/WebReflection/), whose [circular-json](https://github.com/WebReflection/circular-json) was the basis for earlier versions of this project.
