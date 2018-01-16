@@ -1,5 +1,7 @@
 ## 1.0.1 (WIP)
 
+* Fix paths being replaced with paths of equal size
+
 ## 1.0.0 (2018-01-15)
 
 * Rewrite code, take over new features from the `protoblast` package
