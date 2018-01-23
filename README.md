@@ -22,6 +22,7 @@ It can also be used to serialize and revive instances of your own classes.
       * [dryClone](#dryclone)
       * [Custom clone methods](#custom-clone-methods)
   * [Project history](#project-history)
+  * [Project future](#project-future)
   * [Versioning](#versioning)
   * [License](#license)
   * [Acknowledgments](#acknowledgments)
@@ -235,9 +236,14 @@ Because multiple references are represented as `~paths~to~the~first~reference`, 
 Because of this, as soon as `json-dry` encounters a new path that is smaller than the previous one, it'll use that in the future. This helps a bit, though more improvements could be made in the future.
 
 
+## Project future
+
+* Possibly use objects or arrays instead of string primitives for references. This would speed up serializing and parsing, but be a bit more verbose. Tell me what you think in [issue #2](https://github.com/skerit/json-dry/issues/2)
+
+
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/skerit/json-dry/releases).
 
 
 ## License
