@@ -6,6 +6,15 @@ var assert = require('assert'),
 Dry.Classes = Blast.Classes;
 Dry.Classes.__Protoblast = Blast;
 
+function MyPerson(firstname, lastname) {
+	this.firstname = firstname;
+	this.lastname  = lastname;
+}
+
+MyPerson.prototype.fullname = function fullname() {
+	return this.firstname + ' ' + this.lastname;
+};
+
 describe('Dry', function TestDry() {
 
 	var dryCirc2,
@@ -114,15 +123,6 @@ describe('Dry', function TestDry() {
 			var original,
 			    dried,
 			    res;
-
-			function MyPerson(firstname, lastname) {
-				this.firstname = firstname;
-				this.lastname  = lastname;
-			}
-
-			MyPerson.prototype.fullname = function fullname() {
-				return this.firstname + ' ' + this.lastname;
-			};
 
 			Dry.registerDrier('MyPerson', function dryMyPerson(holder, key, value) {
 				return {
@@ -593,6 +593,98 @@ describe('Dry', function TestDry() {
 			clone = Dry.clone(original);
 
 			assert.equal(clone, 1);
+		});
+
+		it('should use a custom method if given', function() {
+
+			var dried,
+			    temp,
+			    flo;
+
+			function Pet(species, name) {
+				this.species = species;
+				this.name = name;
+			}
+
+			// Create the new class now
+			flo = new Pet('cat', 'Flo');
+
+			temp = Dry.clone(flo);
+
+			// No dry methods are added yet, so it should be a simple object
+			assert.equal(temp.constructor == Object, true);
+			assert.equal(temp.species, 'cat');
+			assert.equal(temp.name,    'Flo');
+
+			// First add a toJSON method, the final fallback
+			Pet.prototype.toJSON = function toJSON() {
+				return {
+					species : this.species,
+					name    : this.name
+				};
+			};
+
+			temp = Dry.clone(flo);
+			assert.equal(temp.constructor == Object, true);
+			assert.equal(temp.species, 'cat');
+			assert.equal(temp.name,    'Flo');
+
+			// Add the toDry method
+			Pet.prototype.toDry = function toDry() {
+				return {
+					value: {
+						species : this.species,
+						name    : this.name
+					}
+				};
+			};
+
+			temp = Dry.clone(flo);
+
+			// No undry method is added yet, so it should be a simple object
+			assert.equal(temp.constructor == Object, true);
+			assert.equal(temp.species, 'cat');
+			assert.equal(temp.name,    'Flo');
+
+			// Add the undry methods
+			Pet.unDry = function unDry(value) {
+				return new Pet(value.species, value.name);
+			}
+
+			Pet.prototype.getDescription = function getDescription() {
+				return this.name + ' is a ' + this.species;
+			};
+
+			Dry.registerClass(Pet);
+
+			dried = Dry.stringify(flo);
+			temp = Dry.parse(dried);
+
+			assert.equal(temp.constructor === Pet, true);
+			assert.equal(temp.getDescription(),    'Flo is a cat');
+
+			dried = Dry.clone(flo, 'getDescription');
+
+			// It should have used "getDescription" to clone it
+			assert.equal(dried, 'Flo is a cat');
+
+			// It should use the dry methods if no special clone method is available
+			temp = Dry.clone(flo);
+
+			assert.equal(temp.constructor === Pet, true);
+			assert.equal(temp.getDescription(),    'Flo is a cat');
+		});
+
+		it('should use driers if nothing else is available', function() {
+
+			var griet = new MyPerson('Griet', 'De Leener'),
+			    temp;
+
+			temp = Dry.clone(griet);
+
+			assert.equal(temp.constructor === MyPerson, true);
+			assert.equal(temp.firstname, 'Griet');
+			assert.equal(temp.lastname,  'De Leener');
 		});
 	});
 });
