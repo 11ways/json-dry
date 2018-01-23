@@ -1,6 +1,6 @@
-## 1.0.1 (WIP)
+## 1.0.1 (2018-01-23)
 
-* Fix paths being replaced with paths of equal size
+* Fix reference paths being replaced with paths of equal or even longer size
 
 ## 1.0.0 (2018-01-15)
 
