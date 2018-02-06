@@ -641,6 +641,54 @@ describe('Dry', function TestDry() {
 			assert.equal(undried.temp[0], 'long_key');
 			assert.equal(undried.original.long_key, undried.temp);
 		});
+
+		it('should fix circular references that were incorrectly passed to an undrier', function() {
+
+			function Alpha(options) {
+				this.alpha = true;
+				this.options = options;
+			}
+
+			function Beta(options) {
+				this.beta = true;
+				this.options = options;
+			}
+
+			Alpha.prototype.toDry = Beta.prototype.toDry = function toDry() {
+				return {
+					value: {
+						options: this.options
+					}
+				}
+			};
+
+			Alpha.unDry = Beta.unDry = function unDry(value) {
+				return new this(value.options);
+			};
+
+			Dry.registerClass(Alpha);
+			Dry.registerClass(Beta);
+
+			var arr,
+			    a,
+			    b;
+
+			a = new Alpha({name: 'a'});
+			b = new Beta({name: 'b'});
+			arr = [a, b];
+
+			a.options.b = b;
+			b.options.parent_a = a;
+
+			var dried = Dry.toObject(arr);
+			var undried = Dry.parse(dried);
+
+			a = undried[0];
+			b = undried[1];
+
+			assert.equal(a.options.b, b);
+			assert.equal(b.options.parent_a, a);
+		});
 	});
 
 	describe('.toObject()', function() {

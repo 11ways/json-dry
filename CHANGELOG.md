@@ -1,5 +1,7 @@
 ## 1.0.4 (WIP)
 
+* Fix circular references that were incorrectly passed to an undrier
+
 ## 1.0.3 (2018-02-06)
 
 * Fix certain references not being regenerated correctly because key iteration happens out-of-order
