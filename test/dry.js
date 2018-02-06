@@ -518,6 +518,101 @@ describe('Dry', function TestDry() {
 
 			assert.equal(res.ref, undefined);
 		});
+
+		it('should pass replaced undried values to other undriers', function() {
+
+			var Doc = function Doc(options) {
+				this.options = options;
+			};
+
+			Doc.unDry = function unDry(obj, force) {
+
+				if (obj.options.name == 'other') {
+					assert.equal(obj.options.deep.join(''), 'very deep');
+				} else if (obj.options.name == 'inst') {
+					assert.equal(obj.options.other instanceof Doc, true);
+				}
+
+				return new Doc(obj.options);
+			};
+
+			Doc.prototype.toDry = function toDry() {
+				return {
+					value: {
+						options: this.options
+					}
+				}
+			};
+
+			Dry.registerClass(Doc);
+
+			var arr = [],
+			    deep,
+			    inst,
+			    other;
+
+			// An array we'll put in an instance and refer to afterwards
+			deep = ['very deep'];
+
+			// The other instance
+			other = new Doc({name: 'other', bla: 1, deep: deep});
+
+			// The top instance
+			inst = new Doc({name: 'inst', other: other});
+
+			// The other instance
+			arr.push({other: other});
+
+			// The instance with a reference to `other`
+			arr.push(inst);
+
+			// And also push the deep array
+			arr.push(deep)
+
+			var dried = Dry.toObject(arr);
+			var undried = Dry.parse(dried);
+
+			assert.equal(undried[2].join(''), 'very deep');
+			assert.equal(undried[2], undried[0].other.options.deep);
+			assert.equal(undried[0].other instanceof Doc, true);
+			assert.equal(undried[1] instanceof Doc, true);
+		});
+
+		it('should ignore undriers if class is not registered', function() {
+
+			var Doc = function DocUnregistered(options) {
+				this.options = options;
+			};
+
+			Doc.unDry = function unDry(obj, force) {
+				throw new Error('Unregistered class should not be undried');
+			};
+
+			Doc.prototype.toDry = function toDry() {
+				return {
+					value: {
+						options: this.options
+					}
+				}
+			};
+
+			var arr = [],
+			    deep,
+			    inst;
+
+			deep = ['very deep'];
+			inst = new Doc({name: 'inst', deep: deep});
+
+			arr = [deep, inst, deep];
+
+			var dried = Dry.toObject(arr);
+			var undried = Dry.parse(dried);
+
+			assert.equal(undried[0].join(''), 'very deep');
+			assert.equal(undried[1] instanceof Doc, false);
+			assert.equal(undried[1].options.deep, undried[0]);
+			assert.equal(undried[2], undried[0]);
+		});
 	});
 
 	describe('.toObject()', function() {

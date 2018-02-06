@@ -1,3 +1,7 @@
+## 1.0.2 (2018-02-06)
+
+* Fix objects being passed to `unDry` functions without being fully regenerated
+
 ## 1.0.1 (2018-01-23)
 
 * Fix reference paths being replaced with paths of equal or even longer size
