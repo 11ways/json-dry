@@ -1,3 +1,5 @@
+## 1.0.4 (WIP)
+
 ## 1.0.3 (2018-02-06)
 
 * Fix certain references not being regenerated correctly because key iteration happens out-of-order
