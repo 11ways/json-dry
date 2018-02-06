@@ -613,6 +613,34 @@ describe('Dry', function TestDry() {
 			assert.equal(undried[1].options.deep, undried[0]);
 			assert.equal(undried[2], undried[0]);
 		});
+
+		it('should try to resolve out-of-order references', function() {
+			var original,
+			    holder;
+
+			original = {
+				name: 'original',
+				long_key: ['long_key']
+			};
+
+			holder = {
+				name       : 'holder',
+				temp       : {},
+				original   : original,
+				long_key   : original.long_key
+			};
+
+			var dried = Dry.toObject(holder);
+
+			// Now we force an out-of-order reference
+			dried.temp = '~long_key';
+
+			var undried = Dry.parse(dried);
+
+			assert.equal(undried.temp == undried.long_key, true);
+			assert.equal(undried.temp[0], 'long_key');
+			assert.equal(undried.original.long_key, undried.temp);
+		});
 	});
 
 	describe('.toObject()', function() {
