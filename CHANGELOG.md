@@ -1,4 +1,4 @@
-## 1.0.4 (WIP)
+## 1.0.4 (2018-06-18)
 
 * Fix circular references that were incorrectly passed to an undrier
 
