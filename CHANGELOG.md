@@ -1,3 +1,9 @@
+## 1.0.5 (2018-07-03)
+
+* Remove dead code
+* Add `findClass` to the exported functions
+* Enable registering classes with a `namespace` property
+
 ## 1.0.4 (2018-06-18)
 
 * Fix circular references that were incorrectly passed to an undrier

@@ -389,6 +389,18 @@ describe('Dry', function TestDry() {
 			assert.equal(undried.constructor.name, 'Date');
 			assert.equal(undried+'', obj+'');
 		});
+
+		it('should handle Objects without a prototype', function() {
+
+			var obj = Object.create(null);
+
+			obj.a = 1;
+			obj.b = 2;
+
+			var str = Dry.stringify(obj);
+
+			assert.deepEqual(Dry.parse(str), obj);
+		});
 	});
 
 	describe('.parse()', function() {
@@ -856,6 +868,25 @@ describe('Dry', function TestDry() {
 			assert.equal(temp.constructor === MyPerson, true);
 			assert.equal(temp.firstname, 'Griet');
 			assert.equal(temp.lastname,  'De Leener');
+		});
+	});
+
+	describe('.findClass(name)', function() {
+		it('should find a registered class by name', function() {
+			var result = Dry.findClass('Pet');
+
+			assert.equal(result.name, 'Pet');
+			assert.equal(Dry.findClass('PetThatDoesnotExist'), null);
+		});
+
+		it('should find a registered class by namespace & name', function() {
+
+			function NamespacedClass() {};
+			NamespacedClass.namespace = 'mynamespace';
+
+			Dry.registerClass(NamespacedClass);
+
+			assert.equal(Dry.findClass({namespace: 'mynamespace', name: 'NamespacedClass'}), NamespacedClass);
 		});
 	});
 });
