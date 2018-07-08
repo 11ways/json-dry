@@ -869,6 +869,43 @@ describe('Dry', function TestDry() {
 			assert.equal(temp.firstname, 'Griet');
 			assert.equal(temp.lastname,  'De Leener');
 		});
+
+		it('should use toDry & unDry if only those are available', function() {
+
+			var List = function List(records, options) {
+				this.records = records;
+				this.options = options;
+			};
+
+			List.prototype.toDry = function toDry() {
+				return {
+					value: {
+						options    : this.options,
+						records    : this.records
+					}
+				};
+			};
+
+			List.unDry = function unDry(obj) {
+				var result = new this(obj.records, obj.options);
+				return result;
+			};
+
+			Dry.registerClass(List);
+
+			var list = new List([1], {test: true});
+			var clone = Dry.clone(list);
+
+			assert.deepEqual(clone.records, list.records);
+			assert.deepEqual(clone.options, list.options);
+			assert.equal(clone.constructor.name, list.constructor.name);
+
+			clone = Dry.clone([list]);
+
+			assert.deepEqual(clone, [list]);
+			assert.equal(clone[0].constructor.name, list.constructor.name);
+
+		});
 	});
 
 	describe('.findClass(name)', function() {
