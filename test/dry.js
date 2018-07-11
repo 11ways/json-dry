@@ -180,8 +180,33 @@ describe('Dry', function TestDry() {
 			var revived = Dry.parse(dried);
 
 			assert.notStrictEqual(revived, undefined, 'MyNamedObject "alpha" was not revived at all');
-			assert.strictEqual(revived.constructor, MyNamedObject);
+			assert.strictEqual(revived.constructor, MyNamedObject, 'The revived object is not of the same constructor');
 			assert.strictEqual(revived.name, alpha.name);
+
+			var dried = Dry.toObject([alpha]);
+
+			assert.deepStrictEqual(dried, [ { dry: 'MyNamedObject', value: 'alpha' } ]);
+
+			revived = Dry.parse(dried);
+
+			assert.strictEqual(revived[0].constructor, MyNamedObject, 'The revived object is not of the same constructor');
+			assert.strictEqual(revived[0].name, alpha.name);
+
+			var obj = {
+				a: [alpha],
+				b: {alpha: alpha},
+				c: [[alpha]]
+			};
+
+			dried = Dry.toObject(obj);
+
+			assert.deepStrictEqual(dried, { a: [ { dry: 'MyNamedObject', value: 'alpha' } ], b: { alpha: '~a~0' }, c: [ [ '~a~0' ] ] });
+
+			parsed = Dry.parse(dried);
+
+			assert.strictEqual(parsed.a[0], parsed.b.alpha, 'These should be a reference to the same value');
+			assert.strictEqual(parsed.a[0], parsed.c[0][0], 'These should be a reference to the same value');
+			assert.strictEqual(parsed.b.alpha.name, 'alpha');
 		});
 
 		it('should handle #toJSON calls properly', function() {

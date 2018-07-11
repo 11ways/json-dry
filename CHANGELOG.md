@@ -1,3 +1,7 @@
+## 1.0.7 (2018-07-11)
+
+* Fix registered undriers without a drypath again by reviving the values immediately
+
 ## 1.0.6 (2018-07-11)
 
 * Fix registered undriers not being called on dried values without a drypath property
