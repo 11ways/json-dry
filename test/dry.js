@@ -138,6 +138,9 @@ describe('Dry', function TestDry() {
 			original = new MyPerson('Lies', 'Lefever');
 
 			dried = Dry.stringify(original);
+
+			assert.strictEqual(dried, '{"dry":"MyPerson","value":{"firstname":"Lies","lastname":"Lefever"},"drypath":[]}');
+
 			res = Dry.parse(dried);
 
 			assert.equal(res.fullname(), original.fullname());
@@ -148,6 +151,37 @@ describe('Dry', function TestDry() {
 
 			assert.equal(res[0].fullname(),  original.fullname());
 			assert.equal(Array.isArray(res), true);
+		});
+
+		it('should use registerd driers without paths added', function() {
+
+			function MyNamedObject(name) {
+				this.name = name;
+			}
+
+			Dry.registerClass(MyNamedObject);
+
+			Dry.registerDrier('MyNamedObject', function dryMyObject(holder, key, value) {
+				return String(value.name);
+			}, {add_path: false});
+
+			Dry.registerUndrier('MyNamedObject', function undryMyObject(holder, key, value) {
+				return new MyNamedObject(value);
+			});
+
+			var alpha = new MyNamedObject('alpha');
+
+			assert.strictEqual(alpha.name, 'alpha');
+
+			var dried = Dry.toObject(alpha);
+
+			assert.deepStrictEqual(dried, { dry: 'MyNamedObject', value: 'alpha' });
+
+			var revived = Dry.parse(dried);
+
+			assert.notStrictEqual(revived, undefined, 'MyNamedObject "alpha" was not revived at all');
+			assert.strictEqual(revived.constructor, MyNamedObject);
+			assert.strictEqual(revived.name, alpha.name);
 		});
 
 		it('should handle #toJSON calls properly', function() {
