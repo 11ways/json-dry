@@ -1,3 +1,7 @@
+## 1.0.8 (WIP)
+
+* Fix reviving nested undried classes
+
 ## 1.0.7 (2018-07-11)
 
 * Fix registered undriers without a drypath again by reviving the values immediately

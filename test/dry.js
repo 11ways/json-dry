@@ -118,6 +118,62 @@ describe('Dry', function TestDry() {
 			assert.equal(res.fullname(), original.fullname());
 		});
 
+		it('should handle classes with circular references', function() {
+
+			function SomeDoc(name) {
+				this.name = name;
+				this.tree = new Tree(this);
+			}
+
+			SomeDoc.unDry = function unDry(value) {
+				var result;
+
+				result = Object.create(SomeDoc.prototype);
+				result.name = value.name;
+				result.tree = value.tree;
+
+				return result;
+			};
+
+			SomeDoc.prototype.toDry = function toDry() {
+				return {
+					value: {
+						name : this.name,
+						tree : this.tree
+					}
+				};
+			};
+
+			function Tree(doc) {
+				this.doc = doc;
+			}
+
+			Tree.unDry = function unDry(value) {
+				return new Tree(value.doc);
+			};
+
+			Tree.prototype.toDry = function toDry() {
+				return {
+					value: {
+						doc: this.doc
+					}
+				};
+			};
+
+			Dry.registerClass(SomeDoc);
+			Dry.registerClass(Tree);
+
+			let doc = new SomeDoc('doctest');
+
+			let objectified = Dry.toObject(doc);
+			let parsed = Dry.parse(objectified);
+
+			assert.strictEqual(parsed instanceof SomeDoc, true, 'Failed to revive SomeDoc instance');
+			assert.strictEqual(parsed.name, 'doctest', 'Failed to revive name string');
+			assert.strictEqual(parsed.tree instanceof Tree, true);
+			assert.strictEqual(parsed.tree.doc, parsed, 'Failed to resolve circular reference');
+		});
+
 		it('should use registered driers', function() {
 
 			var original,
