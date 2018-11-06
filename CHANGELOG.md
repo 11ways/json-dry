@@ -1,6 +1,7 @@
 ## 1.0.8 (WIP)
 
 * Fix reviving nested undried classes
+* The `unDry` static method will receive a second argument: false if used for regular unserializing or true/custom_method_name if used for cloning.
 
 ## 1.0.7 (2018-07-11)
 
