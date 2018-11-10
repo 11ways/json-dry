@@ -818,7 +818,7 @@ describe('Dry', function TestDry() {
 		});
 	});
 
-	describe('.toObject()', function() {
+	describe('.toObject(object)', function() {
 		it('should create an object', function() {
 
 			var original,
@@ -845,6 +845,38 @@ describe('Dry', function TestDry() {
 
 			assert.notEqual(dry_obj.deck.value.dict.entry.value,     entry, 'Same references detected!');
 			assert.equal(Blast.Bound.Object.alike(original, result), true,  'The parsed object should be similar to the original');
+		});
+	});
+
+	describe('.toObject(object, replacer, ultradry)', function() {
+		it('should make something ultradry', function() {
+
+			var obj = {
+				deep: {
+					arr: [null, null, {test:1}],
+					date: new Date(),
+					regex: /rx/i,
+					more: {
+						rx: /second/i
+					}
+				}
+			};
+
+			obj.deep.arr[0] = obj.deep.date;
+			obj.deep.arr[1] = obj.deep.more;
+			obj.shallow = Object.assign({}, obj.deep);
+			obj.test = obj.deep.arr[2]
+			obj.deep = {very: {deep: {indeed: obj.deep}}};
+
+			var dried = Dry.toObject(obj, null, true);
+
+			assert.strictEqual(dried.dry, 'ultradry');
+			assert.strictEqual(dried.register.length > 0, true);
+
+			var undried = Dry.parse(dried);
+
+			assert.strictEqual(undried.shallow.date, undried.deep.very.deep.indeed.date);
+			assert.strictEqual(undried.test, undried.deep.very.deep.indeed.arr[2]);
 		});
 	});
 

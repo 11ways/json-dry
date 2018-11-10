@@ -1,3 +1,7 @@
+## 1.0.9 (WIP)
+
+* Add `ultradry` option, which created short reference paths but also reorders the dried object
+
 ## 1.0.8 (2018-11-09)
 
 * Fix reviving nested undried classes
