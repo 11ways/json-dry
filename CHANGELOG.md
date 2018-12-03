@@ -1,3 +1,8 @@
+## 1.0.9 (WIP)
+
+* Also export the `walk` function
+* Use `Namespace.getClassForUndry()` methods if available
+
 ## 1.0.8 (2018-11-09)
 
 * Fix reviving nested undried classes
