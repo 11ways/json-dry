@@ -1,4 +1,4 @@
-## 1.0.9 (WIP)
+## 1.0.9 (2018-12-06)
 
 * Also export the `walk` function
 * Use `Namespace.getClassForUndry()` methods if available
