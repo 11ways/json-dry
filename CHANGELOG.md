@@ -1,3 +1,7 @@
+## 1.0.10 (WIP)
+
+* Add extra constructor checks before drying values with a `Date` or `RegExp` class name
+
 ## 1.0.9 (2018-12-06)
 
 * Also export the `walk` function
