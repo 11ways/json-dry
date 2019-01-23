@@ -18,7 +18,8 @@ MyPerson.prototype.fullname = function fullname() {
 describe('Dry', function TestDry() {
 
 	var dryCirc2,
-	    dryCirc;
+	    dryCirc,
+	    Table;
 
 	describe('.stringify()', function() {
 		it('should stringify the object', function() {
@@ -1019,7 +1020,86 @@ describe('Dry', function TestDry() {
 
 			assert.deepEqual(clone, [list]);
 			assert.equal(clone[0].constructor.name, list.constructor.name);
+		});
 
+		it('should handle circular references', function() {
+
+			Table = function Table() {
+				this.options = {
+					deep: {
+						test: 1,
+						self: this
+					},
+					created: Date.now()
+				};
+			};
+
+			Table.prototype.toHawkejs = function toHawkejs(wm) {
+
+				var result = new Table(),
+				    options;
+
+				wm.set(this, result);
+
+				// Clone the options
+				options = Dry.clone(this.options, 'toHawkejs', wm);
+
+				result.options = options;
+
+				return result;
+			};
+
+			var table = new Table();
+
+			table.options.self = table;
+			table.options.set = true;
+
+			var clone = Dry.clone(table, 'toHawkejs');
+
+			assert.strictEqual(clone.constructor.name, 'Table');
+			assert.strictEqual(clone.options.self, clone);
+			assert.strictEqual(clone.options.deep.self, clone);
+			assert.strictEqual(clone.options.created, table.options.created);
+		});
+
+		it('should handle circular references in other instances that use a toDry method', function() {
+
+			var Plate = function Plate(table) {
+				this.table = table;
+				this.options = {
+					created_plate: Date.now()
+				};
+			};
+
+			Plate.prototype.toDry = function toDry() {
+
+				var value = {
+					table   : this.table,
+					options : this.options
+				};
+
+				return {
+					value: value
+				};
+			};
+
+			Plate.unDry = function unDry(value) {
+
+				var result = new Plate(value.table);
+				result.options = value.options;
+
+				return result;
+			};
+
+			Dry.registerClass(Plate);
+
+			var table = new Table(),
+			    plate = new Plate(table);
+
+			var clone = Dry.clone(plate, 'toHawkejs');
+
+			assert.strictEqual(clone.table, clone.table.options.deep.self);
+			assert.strictEqual(clone.constructor, Plate);
 		});
 	});
 
