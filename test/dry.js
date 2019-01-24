@@ -1060,6 +1060,13 @@ describe('Dry', function TestDry() {
 			assert.strictEqual(clone.options.self, clone);
 			assert.strictEqual(clone.options.deep.self, clone);
 			assert.strictEqual(clone.options.created, table.options.created);
+
+			clone = Dry.clone(table.options, 'toHawkejs');
+			clone = clone.deep.self;
+			assert.strictEqual(clone.constructor.name, 'Table');
+			assert.strictEqual(clone.options.self, clone);
+			assert.strictEqual(clone.options.deep.self, clone);
+			assert.strictEqual(clone.options.created, table.options.created);
 		});
 
 		it('should handle circular references in other instances that use a toDry method', function() {
@@ -1100,6 +1107,13 @@ describe('Dry', function TestDry() {
 
 			assert.strictEqual(clone.table, clone.table.options.deep.self);
 			assert.strictEqual(clone.constructor, Plate);
+
+			plate.options.deep = {
+				self: plate,
+				table: plate.table
+			};
+
+			clone = Dry.clone(plate.options, 'toHawkejs');
 		});
 	});
 

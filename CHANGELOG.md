@@ -2,6 +2,7 @@
 
 * Add extra constructor checks before drying values with a `Date` or `RegExp` class name
 * Fix some recursive issues in the `clone()` method
+* Fix values not being undried when it's a child of another undried object
 
 ## 1.0.9 (2018-12-06)
 
