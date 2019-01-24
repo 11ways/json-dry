@@ -832,6 +832,20 @@ describe('Dry', function TestDry() {
 			assert.strictEqual(undried[0].options.b.constructor, Beta);
 			assert.strictEqual(+undried[0].options.b.options.date, +date);
 			assert.strictEqual(+undried[1], +date, 'The second date reference was not undried correctly');
+
+			var c = new Beta({});
+			c.options.date = date;
+			b.options.c = c;
+
+			dried = Dry.toObject([b, a, c, date]);
+			undried = Dry.parse(dried);
+
+			assert.strictEqual(undried[1].alpha, true);
+			assert.strictEqual(undried[1].constructor, Alpha);
+			assert.strictEqual(undried[1].options.b.beta, true);
+			assert.strictEqual(undried[1].options.b.constructor, Beta);
+			assert.strictEqual(+undried[1].options.b.options.date, +date);
+			assert.strictEqual(+undried[3], +date, 'The second date reference was not undried correctly');
 		});
 	});
 
