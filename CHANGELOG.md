@@ -1,4 +1,4 @@
-## 1.0.10 (WIP)
+## 1.0.10 (2019-01-31)
 
 * Add extra constructor checks before drying values with a `Date` or `RegExp` class name
 * Fix some recursive issues in the `clone()` method
