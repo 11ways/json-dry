@@ -1,3 +1,7 @@
+## 1.0.11 (WIP)
+
+* Split up `dryReplacer` function, added `replaceObject` function
+
 ## 1.0.10 (2019-01-31)
 
 * Add extra constructor checks before drying values with a `Date` or `RegExp` class name

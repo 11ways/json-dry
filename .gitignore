@@ -9,9 +9,16 @@
 ._*
 *.bin
 
-# Ignore log files
+# Log files
 npm-debug.log
 v8.log
+*.cpuprofile
+callgrind*
+*.wtf-trace
+
+# Ignore report files
+plato/
+*.0x/
 
 # Ignore node modules
 /node_modules/
