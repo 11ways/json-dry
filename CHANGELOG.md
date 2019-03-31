@@ -1,6 +1,7 @@
 ## 1.0.11 (WIP)
 
 * Split up `dryReplacer` function, added `replaceObject` function
+* Don't assign regenerated value if it's exactly the same, prevents HTMLCollection errors
 
 ## 1.0.10 (2019-01-31)
 
