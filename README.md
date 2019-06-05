@@ -1,6 +1,7 @@
 # JSON-dry
 
-[![NPM version](http://img.shields.io/npm/v/json-dry.svg)](https://npmjs.org/package/json-dry) 
+[![NPM version](http://img.shields.io/npm/v/json-dry.svg)](https://npmjs.org/package/json-dry) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fskerit%2Fjson-dry.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fskerit%2Fjson-dry?ref=badge_shield)
+
 [![Build Status](https://travis-ci.org/skerit/json-dry.svg?branch=master)](https://travis-ci.org/skerit/json-dry)
 [![Coverage Status](https://coveralls.io/repos/github/skerit/json-dry/badge.svg?branch=master)](https://coveralls.io/github/skerit/json-dry?branch=master)
 
@@ -27,6 +28,9 @@ It can also be used to serialize and revive instances of your own classes.
   * [License](#license)
   * [Acknowledgments](#acknowledgments)
 
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fskerit%2Fjson-dry.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fskerit%2Fjson-dry?ref=badge_large)
 
 ## Installation
 
