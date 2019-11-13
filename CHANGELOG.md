@@ -2,6 +2,7 @@
 
 * Split up `dryReplacer` function, added `replaceObject` function
 * Don't assign regenerated value if it's exactly the same, prevents HTMLCollection errors
+* Fix throwing an error when serializing an invalid date
 
 ## 1.0.10 (2019-01-31)
 
