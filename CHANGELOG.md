@@ -1,3 +1,7 @@
+## 1.0.12 (2019-11-22)
+
+* Simple version boost to fix NPM publish issue
+
 ## 1.0.11 (2019-11-22)
 
 * Split up `dryReplacer` function, added `replaceObject` function
