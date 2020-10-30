@@ -847,6 +847,111 @@ describe('Dry', function TestDry() {
 			assert.strictEqual(+undried[1].options.b.options.date, +date);
 			assert.strictEqual(+undried[3], +date, 'The second date reference was not undried correctly');
 		});
+
+		it('should handle circular references in unDry methods', function() {
+
+			let attempt = 0;
+
+			function Perang(name) {
+				this.name = name;
+				this.refleep = null;
+			};
+
+			Perang.unDry = function unDry(obj, force, whenDone) {
+
+				let result = new Perang(obj.name);
+
+				result.refleep = obj.refleep;
+
+				if (attempt == 0) {
+					// Next call will be for the clone test
+					assert.strictEqual(obj.refleep.dry, 'toDry', 'The dried variant of the class is expected');
+				}
+
+				attempt++;
+
+				whenDone(function setRefleep() {
+					result.refleep = obj.refleep;
+
+					assert.strictEqual(obj.refleep instanceof Refleep, true, 'The `refleep` property should have been undried by now')
+				});
+
+				return result;
+			};
+
+			Perang.prototype.toDry = function toDry() {
+				return {
+					value: {
+						name    : this.name,
+						refleep : this.refleep
+					}
+				}
+			};
+
+			function Refleep(name) {
+				this.name = name;
+				this.perang = null;
+			}
+
+			Refleep.unDry = function unDry(obj, force, whenDone) {
+
+				let result = new Refleep(obj.name);
+
+				whenDone(function setRefleep() {
+					result.perang = obj.perang;
+				});
+
+				return result;
+			};
+
+			Refleep.prototype.toDry = function toDry() {
+				return {
+					value: {
+						name    : this.name,
+						perang  : this.perang
+					}
+				}
+			};
+
+			Dry.registerClass(Perang);
+			Dry.registerClass(Refleep);
+
+			// This test depends on the order!
+			let perang = new Perang('perang-1');
+			let refleep = new Refleep('refleep-1');
+
+			perang.refleep = refleep;
+			refleep.perang = perang;
+
+			let serialized = Dry.toObject([refleep, perang]);
+			let unserialized = Dry.parse(serialized);
+
+			let perang_two = unserialized[1],
+			    refleep_two = unserialized[0];
+
+			assert.strictEqual(perang !== perang_two, true);
+			assert.strictEqual(refleep !== refleep_two, true);
+
+			assert.strictEqual(perang_two, refleep_two.perang);
+			assert.strictEqual(refleep_two, perang_two.refleep);
+
+			assert.strictEqual(perang_two instanceof Perang, true);
+			assert.strictEqual(refleep_two instanceof Refleep, true);
+
+			let cloned = Dry.clone([refleep, perang]);
+
+			perang_three = cloned[1];
+			refleep_three = cloned[0];
+
+			assert.strictEqual(perang !== perang_three, true);
+			assert.strictEqual(refleep !== refleep_three, true);
+
+			assert.strictEqual(perang_three, refleep_three.perang);
+			assert.strictEqual(refleep_three, perang_three.refleep);
+
+			assert.strictEqual(perang_three instanceof Perang, true);
+			assert.strictEqual(refleep_three instanceof Refleep, true);
+		});
 	});
 
 	describe('.toObject()', function() {

@@ -156,6 +156,34 @@ undried.fullname();
 // returns "Jelle De Loecker"
 ```
 
+## Serializing & reviving instances with circular references
+
+Some classes contain references to each other, for example:
+
+```js
+let alpha = new Alpha(),
+    beta = new Beta();
+
+alpha.beta = beta;
+beta.alpha = alpha;
+```
+
+The problem is that when you serialize & then try to revive this, one of the `unDry` methods will receive an un-revived placeholder. This can obviously cause issues, especially when setting the property has side-effects. So a new argument `whenDone` has been added to the `unDry` method, like so:
+
+```js
+Alpha.prototype.unDry = function unDry(obj, custom_method, whenDone) {
+
+  let alpha = new Alpha();
+
+  whenDone(function() {
+    alpha.beta = obj.beta;
+  });
+
+  return alpha;
+}
+```
+
+`whenDone` functions will be called just before the `Dry.undry()` function exits, so all the references will have been revived by then.
 
 ### toObject
 

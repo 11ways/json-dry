@@ -1,3 +1,8 @@
+## 1.1.0 (WIP)
+
+* Added `whenDone` function parameter to the `unDry` & `unDryFunction` function calls
+* Fixed infinite loop issue when using `Dry.clone()` that relies on `unDry` methods
+
 ## 1.0.12 (2019-11-22)
 
 * Simple version boost to fix NPM publish issue
