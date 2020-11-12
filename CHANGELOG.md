@@ -1,4 +1,4 @@
-## 1.1.0 (WIP)
+## 1.1.0 (2020-11-12)
 
 * Added `whenDone` function parameter to the `unDry` & `unDryFunction` function calls
 * Fixed infinite loop issue when using `Dry.clone()` that relies on `unDry` methods
