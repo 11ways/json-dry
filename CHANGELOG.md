@@ -1,3 +1,7 @@
+## 1.1.1 (WIP)
+
+* Make `Dry.parse()` add the current path being revived to possible errors
+
 ## 1.1.0 (2020-11-12)
 
 * Added `whenDone` function parameter to the `unDry` & `unDryFunction` function calls
