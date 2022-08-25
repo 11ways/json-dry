@@ -1,4 +1,4 @@
-## 1.1.1 (WIP)
+## 1.1.1 (2022-08-25)
 
 * Make `Dry.parse()` add the current path being revived to possible errors
 
