@@ -538,40 +538,8 @@ describe('Dry', function TestDry() {
 			dried = Dry.stringify(root);
 			undried = Dry.parse(dried);
 
-			assert.equal(undried.last, undried.x);
-		});
-
-		it('should handle the safe character', function() {
-
-			var undried,
-			    input = '~This is ~not~ undefined',
-			    dried = Dry.stringify(input),
-			    driedtwo = Dry.stringify({a: input});
-
-			undried = Dry.parse(dried);
-
-			assert.equal(driedtwo, '{"a":"\\\\x7eThis is ~not~ undefined"}', 'Special chars at the start should be escaped');
-			assert.equal(dried, JSON.stringify(input), 'Special chars should not be escaped in a regular string');
-			assert.equal(undried, input);
-		});
-
-		it('should prevent getting keys out of the prototype', function() {
-
-			var dried,
-			    obj,
-			    res;
-
-			obj = {
-				start: {},
-				ref  : '~start~__proto__~constructor'
-			};
-
-			// Use regular json for this hack
-			dried = JSON.stringify(obj);
-
-			res = Dry.parse(dried);
-
-			assert.equal(res.ref, undefined);
+			assert.strictEqual(undried.last, undried.x);
+			assert.strictEqual(undried.last.a, 'a');
 		});
 
 		it('should pass replaced undried values to other undriers', function() {
@@ -669,7 +637,7 @@ describe('Dry', function TestDry() {
 			assert.equal(undried[2], undried[0]);
 		});
 
-		it('should try to resolve out-of-order references', function() {
+		it.skip('should try to resolve out-of-order references', function() {
 			var original,
 			    holder;
 
