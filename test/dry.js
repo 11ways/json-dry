@@ -36,7 +36,8 @@ describe('Dry', function TestDry() {
 			json = JSON.stringify(obj);
 			dry = Dry.stringify(obj);
 
-			assert.equal(dry.length < json.length, true, 'Dry string is not shorter than JSON string');
+			// Shorter strings aren't always ensured
+			//assert.equal(dry.length < json.length, true, 'Dry string is not shorter than JSON string');
 
 			undry = Dry.parse(dry);
 
@@ -53,10 +54,24 @@ describe('Dry', function TestDry() {
 			dry = Dry.stringify(obj);
 			dryCirc = dry;
 
-			assert.equal(dry, '{"test":true,"arr":[0,1,2],"circle":"~"}');
+			// Don't test the serialized form
+			//assert.equal(dry, '{"test":true,"arr":[0,1,2],"circle":"~"}');
+
+			let undried = Dry.parse(dry);
+
+			assert.strictEqual(typeof undried, 'object', 'The serialized string was not undried');
+
+			assert.strictEqual(undried.circle, undried);
+			assert.deepStrictEqual(undried.arr, obj.arr);
 
 			obj.deep = {obj: obj};
 			dryCirc2 = Dry.stringify(obj);
+
+			undried = Dry.parse(dryCirc2);
+
+			assert.strictEqual(undried.circle, undried);
+			assert.strictEqual(undried.deep.obj, undried);
+			assert.deepStrictEqual(undried.arr, obj.arr);
 		});
 
 		it('should use #toDry() method of objects', function() {
@@ -76,8 +91,8 @@ describe('Dry', function TestDry() {
 			temp = JSON.parse(dry);
 			ntemp = JSON.parse(ndry);
 
-			assert.equal(temp.path, '__Protoblast.Classes.Deck');
-			assert.equal(ntemp.nonroot.path, '__Protoblast.Classes.Deck');
+			assert.equal(temp.$root.path, '__Protoblast.Classes.Deck');
+			assert.equal(ntemp.$root.nonroot.path, '__Protoblast.Classes.Deck');
 		});
 
 		it('should serialize & revive registered classes', function() {
