@@ -763,7 +763,7 @@ describe('Dry', function TestDry() {
 			assert.strictEqual(+undried[3], +date, 'The second date reference was not undried correctly');
 		});
 
-		it('should handle circular references in unDry methods', function() {
+		it('should allow fixing properties afterwards with a `whenDone` method', function() {
 
 			let attempt = 0;
 
@@ -777,11 +777,6 @@ describe('Dry', function TestDry() {
 				let result = new Perang(obj.name);
 
 				result.refleep = obj.refleep;
-
-				if (attempt == 0) {
-					// Next call will be for the clone test
-					assert.strictEqual(obj.refleep.dry, 'toDry', 'The dried variant of the class is expected');
-				}
 
 				attempt++;
 
@@ -839,6 +834,7 @@ describe('Dry', function TestDry() {
 			refleep.perang = perang;
 
 			let serialized = Dry.toObject([refleep, perang]);
+
 			let unserialized = Dry.parse(serialized);
 
 			let perang_two = unserialized[1],
@@ -867,6 +863,76 @@ describe('Dry', function TestDry() {
 			assert.strictEqual(perang_three instanceof Perang, true);
 			assert.strictEqual(refleep_three instanceof Refleep, true);
 		});
+
+		it('should fix mutual references', function() {
+
+			function MutualAlpha(name) {
+				this.name = name;
+				this.beta = null;
+			};
+		
+			MutualAlpha.unDry = function unDry(obj, force, whenDone) {
+				let result = new MutualAlpha(obj.name);
+				result.beta = obj.beta;
+				return result;
+			};
+		
+			MutualAlpha.prototype.toDry = function toDry() {
+				return {
+					value: {
+						name    : this.name,
+						beta    : this.beta,
+					}
+				}
+			};
+		
+			function MutualBeta(name) {
+				this.name = name;
+				this.alpha = null;
+			}
+		
+			MutualBeta.unDry = function unDry(obj, force, whenDone) {
+		
+				let result = new MutualBeta(obj.name);
+				result.alpha = obj.alpha;
+				return result;
+			};
+		
+			MutualBeta.prototype.toDry = function toDry() {
+				return {
+					value: {
+						name    : this.name,
+						alpha   : this.alpha,
+					}
+				}
+			};
+		
+			Dry.registerClass(MutualAlpha);
+			Dry.registerClass(MutualBeta);
+		
+			// This test depends on the order!
+			let alpha = new MutualAlpha('alpha');
+			let beta = new MutualBeta('beta');
+		
+			alpha.beta = beta;
+			beta.alpha = alpha;
+		
+			let serialized = Dry.toObject([alpha, beta]);
+			
+			let unserialized = Dry.parse(serialized);
+		
+			assert.strictEqual(unserialized.length, 2, 'The array should contain 2 values');
+
+			let revived_alpha = unserialized[0],
+			    revived_beta = unserialized[1];
+			
+			assert.strictEqual(revived_alpha instanceof MutualAlpha, true);
+			assert.strictEqual(revived_beta instanceof MutualBeta, true);
+
+			assert.strictEqual(revived_alpha.beta, revived_beta);
+			assert.strictEqual(revived_beta.alpha, revived_alpha);
+
+		});
 	});
 
 	describe('.toObject()', function() {
@@ -894,7 +960,6 @@ describe('Dry', function TestDry() {
 			dry_obj = Dry.toObject(original);
 			result = Dry.parse(dry_obj);
 
-			assert.notEqual(dry_obj.deck.value.dict.entry.value,     entry, 'Same references detected!');
 			assert.equal(Blast.Bound.Object.alike(original, result), true,  'The parsed object should be similar to the original');
 		});
 	});
