@@ -190,6 +190,26 @@ describe('Dry', function TestDry() {
 			assert.strictEqual(parsed.tree.doc, parsed, 'Failed to resolve circular reference');
 		});
 
+		it('should handle objects that refer to each other', function() {
+
+			let first = {name: 'first'},
+				second = {name:'second'};
+			
+			first.second = second;
+			second.first = first;
+			let arr = [first, second]
+
+			let dried = Dry.toObject(arr);
+
+			let revived = Dry.parse(dried);
+
+			let revived_first = arr[0],
+			    revived_second = arr[1];
+
+			assert.strictEqual(revived.length, 2, 'The revived array should contain 2 entries');
+			assert.strictEqual(revived_first, revived_second.first);
+		});
+
 		it('should use registered driers', function() {
 
 			var original,
