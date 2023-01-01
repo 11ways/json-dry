@@ -15,6 +15,9 @@ MyPerson.prototype.fullname = function fullname() {
 	return this.firstname + ' ' + this.lastname;
 };
 
+const ROOT = '~root',
+      REFS = '~refs';
+
 describe('Dry', function TestDry() {
 
 	var dryCirc2,
@@ -91,8 +94,8 @@ describe('Dry', function TestDry() {
 			temp = JSON.parse(dry);
 			ntemp = JSON.parse(ndry);
 
-			assert.equal(temp.$root.path, '__Protoblast.Classes.Deck');
-			assert.equal(ntemp.$root.nonroot.path, '__Protoblast.Classes.Deck');
+			assert.equal(temp[ROOT].path, '__Protoblast.Classes.Deck');
+			assert.equal(ntemp[ROOT].nonroot.path, '__Protoblast.Classes.Deck');
 		});
 
 		it('should serialize & revive registered classes', function() {
