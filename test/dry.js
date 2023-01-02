@@ -295,6 +295,37 @@ describe('Dry', function TestDry() {
 			assert.strictEqual(parsed.b.alpha.name, 'alpha');
 		});
 
+		it('should use the value if no registered undrier is found', function() {
+
+			function SomeObjectId(value) {
+				this.value = value;
+			}
+
+			Dry.registerDrier('SomeObjectId', function dryMyObject(holder, key, value) {
+				return String(value.value);
+			});
+
+			let instance = new SomeObjectId('abc');
+
+			let dried = Dry.toObject(instance);
+
+			assert.strictEqual(dried.dry, 'SomeObjectId');
+
+			let undried = Dry.parse(dried);
+
+			assert.strictEqual(undried, 'abc');
+
+			let arr = [instance, instance, [instance, {instance}]];
+			dried = Dry.toObject(arr);
+
+			undried = Dry.parse(dried);
+			
+			assert.strictEqual(undried[0], 'abc');
+			assert.strictEqual(undried[1], 'abc');
+			assert.strictEqual(undried[2][0], 'abc');
+			assert.strictEqual(undried[2][1].instance, 'abc');
+		});
+
 		it('should handle #toJSON calls properly', function() {
 
 			var undried,
@@ -658,6 +689,68 @@ describe('Dry', function TestDry() {
 			assert.equal(undried[1] instanceof Doc, false);
 			assert.equal(undried[1].options.deep, undried[0]);
 			assert.equal(undried[2], undried[0]);
+		});
+
+		it('should handle references used in undriers', function() {
+
+			function OmegaDoc(record) {
+				this.record = record;
+			}
+
+			OmegaDoc.prototype.toDry = function toDry() {
+				return {
+					value: {
+						record: this.record
+					}
+				}
+			};
+
+			OmegaDoc.unDry = function unDry(obj, force) {
+				return new OmegaDoc(obj.record);
+			};
+
+			Dry.registerClass(OmegaDoc);
+
+			function OmegaId(id) {
+				this.id = id;
+			};
+
+			Dry.registerDrier('OmegaId', function dryId(holder, key, value) {
+				return value.id;
+			});
+
+			let id_1 = new OmegaId('a-very-long-id-so-a-reference-is-made-1'),
+			    id_2 = new OmegaId('a-very-long-id-so-a-reference-is-made-2');
+
+			let record = {
+				id : id_1,
+				name : 'test',
+				nested_ids: [id_2]
+			};
+
+			let record_2 = {
+				id : id_2,
+				name: 'test2',
+				nested_ids: [id_1]
+			};
+
+			let doc = new OmegaDoc(record);
+			let doc_2 = new OmegaDoc(record_2);
+
+			let payload = {
+				raw_ids   : [id_1.id, id_2.id],
+				variables : [doc, doc, doc_2]
+			};
+
+			let dried = Dry.toObject(payload);
+
+			let revived = Dry.parse(dried);
+
+			let revived_doc = revived.variables[0],
+			    revived_doc_2 = revived.variables[2];
+
+			assert.strictEqual(revived_doc.record.id, id_1.id);
+			assert.strictEqual(revived_doc_2.record.id, id_2.id);
 		});
 
 		it.skip('should try to resolve out-of-order references', function() {
