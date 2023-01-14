@@ -1,14 +1,49 @@
-# JSON-dry
+<h1 align="center">
+  <img src="https://protoblast.develry.be/media/static/protoblast-small.png" width=30 alt="Protoblast logo"/>
+  <b>JSON-DRY</b>
+</h1>
+<div align="center">
+  <!-- CI - Github Actions -->
+  <a href="https://github.com/11ways/json-dry/actions/workflows/unit_test.yaml">
+    <img src="https://github.com/11ways/json-dry/actions/workflows/unit_test.yaml/badge.svg" alt="Node.js CI (Linux, MacOS, Windows)" />
+  </a>
 
-[![NPM version](http://img.shields.io/npm/v/json-dry.svg)](https://npmjs.org/package/json-dry) 
-[![Build Status](https://travis-ci.org/skerit/json-dry.svg?branch=master)](https://travis-ci.org/skerit/json-dry)
-[![Coverage Status](https://coveralls.io/repos/github/11ways/json-dry/badge.svg?branch=master)](https://coveralls.io/github/skerit/json-dry?branch=master)
+  <!-- Coverage - Codecov -->
+  <a href="https://codecov.io/gh/11ways/json-dry">
+    <img src="https://img.shields.io/codecov/c/github/11ways/json-dry/master.svg" alt="Codecov Coverage report" />
+  </a>
 
-JSON-dry allows you to stringify objects containing circular references,
-dates, regexes, ...
+  <!-- DM - Snyk -->
+  <a href="https://snyk.io/test/github/11ways/json-dry?targetFile=package.json">
+    <img src="https://snyk.io/test/github/11ways/json-dry/badge.svg?targetFile=package.json" alt="Known Vulnerabilities" />
+  </a>
 
-It can also be used to serialize and revive instances of your own classes.
+  <!-- DM - David -->
+  <a href="https://david-dm.org/11ways/json-dry">
+    <img src="https://david-dm.org/11ways/json-dry/status.svg" alt="Dependency Status" />
+  </a>
+</div>
 
+<div align="center">
+  <!-- Version - npm -->
+  <a href="https://www.npmjs.com/package/json-dry">
+    <img src="https://img.shields.io/npm/v/json-dry.svg" alt="Latest version on npm" />
+  </a>
+
+  <!-- License - MIT -->
+  <a href="https://github.com/11ways/json-dry#license">
+    <img src="https://img.shields.io/github/license/11ways/json-dry.svg" alt="Project license" />
+  </a>
+</div>
+<br>
+<div align="center">
+  Serialize objects while preserving references and custom class instances
+</div>
+<div align="center">
+  <sub>
+    Coded with ❤️ by <a href="#authors">Eleven Ways</a>.
+  </sub>
+</div>
 
 ## Table of contents
 

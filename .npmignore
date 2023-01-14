@@ -1,28 +1,59 @@
-# Ignore IDE specific files
+# IDE files
 *.komodo*
 *.sublime*
 .idea/
 
-# Ignore special files
+## OS specific files
 .DS_Store
+.DS_Store?
 .fuse*
 ._*
-*.bin
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
-# Ignore log files
+# Log files
 npm-debug.log
 v8.log
+*.cpuprofile
+callgrind*
+*.wtf-trace
+deoptigate/
+*.0x/
+deoptigate/
 
 # Ignore node modules
 /node_modules/
 
-# Ignore local test files
-scratch*
+# Coverage directory used by istanbul
+.nyc_output/
+coverage/
+.nycrc.yml
 
-# Ignore coverage results
-/coverage/
+# Coveralls contains private info
 .coveralls.yml
-.travis.yml
+
+# This can contain the private token
+# (This is NOT .codecov.yml)
+codecov.yml
+
+# Github settings
+.github/
+
+# Locks
+package-lock.json
+npm-shrinkwrap.json
+yarn.lock
+
+# Others
+*.bin
+
+# Ignore test files
+scratch*
+log.json
+
+## More files that don't need to go on NPM
 
 # Ignore benchmarks
 /benchmark/
@@ -30,3 +61,9 @@ scratch*
 # The samples and test folder shouldn't go on npm
 samples/*
 test/*
+.github/*
+
+/selenium/
+.codecov.yml
+.travis.yml
+*.tgz

@@ -13,12 +13,12 @@
 	"repository": "git@github.com:11ways/json-dry.git",
 	"scripts": {
 		"test"            : "mocha --exit --reporter spec --bail --timeout 5000 --file test/dry.js",
-		"coverage"        : "./node_modules/istanbul/lib/cli.js cover _mocha",
+		"coverage"        : "nyc --reporter=text --reporter=lcov mocha --exit --timeout 20000 --bail --file test/dry.js",
 		"report-coverage" : "codecov"
 	},
 	"license": "MIT",
 	"devDependencies": {
-		"codecov"                 : "~3.7.0",
+		"codecov"                 : "~3.8.3",
 		"nyc"                     : "^15.1.0",
 		"mocha"                   : "~8.0.1",
 		"protoblast" : "skerit/protoblast#3218106"

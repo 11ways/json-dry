@@ -1,0 +1,30 @@
+name: Node.js CI
+on: [push]
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [14.x, 16.x, 18.x]
+        os: [ubuntu-20.04, windows-latest, macos-latest]
+    env:
+      TZ: "Europe/Brussels"
+      SLOWTEST: true
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Set Windows Timezone
+        if: matrix.os == 'windows-latest'
+        run: tzutil /s "Romance Standard Time"
+      - name: Install NPM Dependencies
+        run: npm install
+      - name: Run Unit Tests
+        run: npm test
+      - name: Run Coverage Tests
+        run: npm run coverage
+      - name: Report Coverage To Codecov
+        run: npm run report-coverage

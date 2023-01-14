@@ -1,13 +1,17 @@
-# Ignore IDE specific files
+# IDE files
 *.komodo*
 *.sublime*
 .idea/
 
-# Ignore special files
+## OS specific files
 .DS_Store
+.DS_Store?
 .fuse*
 ._*
-*.bin
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
 # Log files
 npm-debug.log
@@ -15,17 +19,31 @@ v8.log
 *.cpuprofile
 callgrind*
 *.wtf-trace
-
-# Ignore report files
-plato/
+deoptigate/
 *.0x/
 
-# Ignore node modules
-/node_modules/
+# Dependencies
+node_modules/
 
-# Ignore local test files
-scratch*
+# Coverage directory used by istanbul
+.nyc_output/
+coverage/
 
-# Ignore coverage results
-/coverage/
+# Coveralls contains private info
 .coveralls.yml
+
+# This can contain the private token
+# (This is NOT .codecov.yml)
+codecov.yml
+
+# Locks
+package-lock.json
+npm-shrinkwrap.json
+yarn.lock
+
+# Others
+*.bin
+
+# Ignore test files
+scratch*
+log.json
