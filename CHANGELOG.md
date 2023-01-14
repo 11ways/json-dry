@@ -1,4 +1,4 @@
-## 2.0.0 (WIP)
+## 2.0.0 (2023-01-14)
 
 * Rewrite serialization & parser logic
 * Store any value that is referred to more than once in a separate root property
