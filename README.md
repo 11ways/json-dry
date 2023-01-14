@@ -1,5 +1,4 @@
 <h1 align="center">
-  <img src="https://protoblast.develry.be/media/static/protoblast-small.png" width=30 alt="Protoblast logo"/>
   <b>JSON-DRY</b>
 </h1>
 <div align="center">
@@ -16,11 +15,6 @@
   <!-- DM - Snyk -->
   <a href="https://snyk.io/test/github/11ways/json-dry?targetFile=package.json">
     <img src="https://snyk.io/test/github/11ways/json-dry/badge.svg?targetFile=package.json" alt="Known Vulnerabilities" />
-  </a>
-
-  <!-- DM - David -->
-  <a href="https://david-dm.org/11ways/json-dry">
-    <img src="https://david-dm.org/11ways/json-dry/status.svg" alt="Dependency Status" />
   </a>
 </div>
 
