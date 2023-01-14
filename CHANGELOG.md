@@ -1,3 +1,8 @@
+## 2.0.0 (WIP)
+
+* Rewrite serialization & parser logic
+* Store any value that is referred to more than once in a separate root property
+
 ## 1.1.1 (2022-08-25)
 
 * Make `Dry.parse()` add the current path being revived to possible errors

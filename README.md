@@ -2,7 +2,7 @@
 
 [![NPM version](http://img.shields.io/npm/v/json-dry.svg)](https://npmjs.org/package/json-dry) 
 [![Build Status](https://travis-ci.org/skerit/json-dry.svg?branch=master)](https://travis-ci.org/skerit/json-dry)
-[![Coverage Status](https://coveralls.io/repos/github/skerit/json-dry/badge.svg?branch=master)](https://coveralls.io/github/skerit/json-dry?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/11ways/json-dry/badge.svg?branch=master)](https://coveralls.io/github/skerit/json-dry?branch=master)
 
 JSON-dry allows you to stringify objects containing circular references,
 dates, regexes, ...
@@ -22,7 +22,6 @@ It can also be used to serialize and revive instances of your own classes.
       * [dryClone](#dryclone)
       * [Custom clone methods](#custom-clone-methods)
   * [Project history](#project-history)
-  * [Project future](#project-future)
   * [Versioning](#versioning)
   * [License](#license)
   * [Acknowledgments](#acknowledgments)
@@ -40,13 +39,13 @@ It can also be used to serialize and revive instances of your own classes.
 This is a basic example of stringifying an object (containing multiple references to the same object) and parsing it again.
 
 ```js
-var Dry = require('json-dry');
+let Dry = require('json-dry');
 
 // The object we'll serialize later
-var obj = {};
+let obj = {};
 
 // The object we'll make multiple references to
-var ref = {
+let ref = {
     date  : new Date(),
     regex : /test/i
 };
@@ -59,24 +58,30 @@ obj.reference_two = ref;
 obj.date = ref.date;
 
 // Stringify the object
-var dried = Dry.stringify(obj);
+let dried = Dry.stringify(obj);
 // {
-//     "reference_one": {
-//         "date": {
-//             "dry": "date",
-//             "value": "2018-01-14T17:45:57.989Z"
+//     "~refs": [
+//         {
+//             "date": {"~r": 1},
+//             "regex": {
+//                 "dry": "regexp",
+//                 "value": "/test/i"
+//             }
 //         },
-//         "regex": {
-//             "dry": "regexp",
-//             "value": "/test/i"
+//         {
+//             "dry": "date",
+//             "value": "2023-01-14T12:00:35.194Z"
 //         }
-//     },
-//     "reference_two": "~reference_one",
-//     "date": "~reference_one~date"
+//     ],
+//     "~root": {
+//         "reference_one": {"~r": 0},
+//         "reference_two": {"~r": 0},
+//         "date": {"~r": 1}
+//     }
 // }
 
 // Now we'll revive it again
-var undried = Dry.parse(dried);
+let undried = Dry.parse(dried);
 // { reference_one: { date: 2018-01-14T17:56:43.149Z, regex: /test/i },
 //   reference_two: { date: 2018-01-14T17:56:43.149Z, regex: /test/i },
 //   date: 2018-01-14T17:58:50.427Z }
@@ -108,7 +113,7 @@ Person.prototype.fullname = function fullname() {
 };
 
 // Create an object
-var jelle = new Person({firstname: 'Jelle', lastname: 'De Loecker'});
+let jelle = new Person({firstname: 'Jelle', lastname: 'De Loecker'});
 
 // Test out the fullname method
 jelle.fullname();
@@ -144,11 +149,11 @@ Person.unDry = function unDry(value) {
 Now let's try stringifying it:
 
 ```js
-var dried = Dry.stringify(jelle);
+let dried = Dry.stringify(jelle);
 // {"value":{"firstname":"Jelle","lastname":"De Loecker"},"dry_class":"Person","dry":"toDry","drypath":[]}
 
 // And parse it again
-var undried = Dry.parse(dried);
+let undried = Dry.parse(dried);
 // Person { firstname: 'Jelle', lastname: 'De Loecker' }
 
 // And it works
@@ -199,13 +204,13 @@ In fact: `Dry.stringify` is just a function that performs `JON.stringify` on `Dr
 JSON-Dry offers a specialized `clone` method. While in theory you could clone an object by drying end reviving it, like so:
 
 ```js
-var cloned = Dry.parse(Dry.toObject(jelle))
+let cloned = Dry.parse(Dry.toObject(jelle))
 ```
 
-This is 14x slower than using `clone`, because `toObject` needs to generate paths, escape certain string values and create wrapper objects. These expensive things can be ignored when cloning:
+This is a lot slower than using `clone`, because `toObject` needs to do extra work that can be ignored when cloning:
 
 ```js
-var cloned = Dry.clone(jelle);
+let cloned = Dry.clone(jelle);
 ```
 
 
@@ -242,7 +247,7 @@ Person.prototype.specialOccasionClone = function specialOccasionClone(seen_map, 
     });
 };
 
-var special_clone = Dry.clone(jelle, 'specialOccasionClone');
+let special_clone = Dry.clone(jelle, 'specialOccasionClone');
 special_clone.fullname();
 // Returns "J. De Loecker"
 ```
@@ -253,21 +258,9 @@ Earlier versions of the project were heavily based on [circular-json](https://gi
 
 A lot of the JavaScript code on my websites was already shared between the server & client side, but I also wanted an easy way of sending data to the client while retaining references & class instances, so I started adding features to circular-json and called it `json-dry` (*dry* as in *don't repeat yourself*).
 
-After version 0.1.6 I integrated `json-dry` into my [protoblast](https://github.com/skerit/protoblast) library, and development continued in there. But now it has deserved its own repository once again.
+The versions of `json-dry` before `2.0.0` used references to the path where the object was first seen, like `~paths~to~the~first~reference`. Unfortunately sometimes objects were nested so deep that these reference paths were a lot longer than the serialized version of the object itself.
 
-This version is a rewrite of earlier versions. `circular-json` used (and still uses) multiple arrays to keep track of already used objects, but `json-dry` now uses `WeakMap`s, something that makes the code easier to maintain and is also faster.
-
-`circular-json` was also implemented as a `replacer` and `reviver` function to `JSON.stringify` and `JSON.parse` respectively. `json-dry` actually creates a new object before `stringifying` it.
-
-Because multiple references are represented as `~paths~to~the~first~reference`, the size of the JSON string can be a lot smaller. Can be, though, because sometimes reference paths are longer than the object they are refering to.
-
-Because of this, as soon as `json-dry` encounters a new path that is smaller than the previous one, it'll use that in the future. This helps a bit, though more improvements could be made in the future.
-
-
-## Project future
-
-* Possibly use objects or arrays instead of string primitives for references. This would speed up serializing and parsing, but be a bit more verbose. Tell me what you think in [issue #2](https://github.com/skerit/json-dry/issues/2)
-
+That's why in this new version, objects that are used more than once are stored in the `~refs` array. This way all references to objects can be simple numbers, instead of paths.
 
 ## Versioning
 
@@ -277,8 +270,3 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
-
-
-## Acknowledgments
-
-Many thanks to [WebReflection](https://github.com/WebReflection/), whose [circular-json](https://github.com/WebReflection/circular-json) was the basis for earlier versions of this project.
