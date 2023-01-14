@@ -497,6 +497,34 @@ describe('Dry', function TestDry() {
 
 			assert.deepEqual(Dry.parse(str), obj);
 		});
+
+		it('should escape objects that look like references', function() {
+
+			let original = {
+				root : null,
+				self : null,
+				strings: ['this is a string', 'this is a string too'],
+				numbers: [0, 1, 2],
+				same_nrs: null,
+				nar    : {'~r': 0, text: 'nar'}
+			};
+
+			original.root = original;
+			original.self = original;
+			original.same_nrs = original.numbers;
+
+			let dried = Dry.toObject(original);
+
+			let revived = Dry.parse(dried);
+
+			assert.strictEqual(revived.root, revived);
+			assert.strictEqual(revived.self, revived);
+			assert.strictEqual(revived.numbers, revived.same_nrs);
+			assert.notStrictEqual(revived.nar, revived);
+			assert.notStrictEqual(revived.nar, revived.numbers, 'It was wrongly parsed as a reference');
+			assert.strictEqual(revived.nar.text, 'nar')
+			assert.strictEqual(revived.nar['~r'], 0)
+		});
 	});
 
 	describe('.parse()', function() {
