@@ -1027,6 +1027,34 @@ describe('Dry', function TestDry() {
 
 			assert.strictEqual(revived_alpha.beta, revived_beta);
 			assert.strictEqual(revived_beta.alpha, revived_alpha);
+		});
+
+		it('should accept a reviver', function() { 
+
+			const long_string = 'this is a long string that should be deduplicated in the final dried object';
+
+			let original = {
+				numbers: [0, 1, 2],
+				strings: [long_string, long_string, long_string]
+			};
+
+			let dried = Dry.toObject(original);
+
+			let count = 0;
+
+			let revived = Dry.parse(dried, (key, value) => {
+
+				if (typeof value == 'number') {
+					value++;
+				} else if (typeof value == 'string') {
+					value = (count++) + '-' + value;
+				}
+
+				return value;
+			});
+
+			assert.deepStrictEqual(revived.numbers, [1, 2, 3]);
+			assert.deepStrictEqual(revived.strings, ['0-' + long_string, '1-' + long_string, '2-' + long_string]);
 
 		});
 	});
