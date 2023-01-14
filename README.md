@@ -55,6 +55,14 @@
   * [License](#license)
   * [Acknowledgments](#acknowledgments)
 
+## Version 2.x!
+
+First of all: **Version 2.x of `json-dry` is not able to parse output from version 1.x, if that output contains references!**
+The way references are made & revived has changed completely.
+
+All other syntax has remained the same.
+
+If you did not use `json-dry` to store serialized objects long-term (so just on-the-fly, for communication) then it's probably safe to upgrade.
 
 ## Installation
 
