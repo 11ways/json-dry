@@ -1,3 +1,8 @@
+## 2.0.1 (WIP)
+
+* Optimize speed by always setting the `root` property
+* Optimize speed by removing the class member initializers
+
 ## 2.0.0 (2023-01-14)
 
 * Rewrite serialization & parser logic
