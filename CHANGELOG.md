@@ -2,6 +2,7 @@
 
 * Optimize speed by always setting the `root` property
 * Optimize speed by removing the class member initializers
+* Optimize the clone methods
 
 ## 2.0.0 (2023-01-14)
 
