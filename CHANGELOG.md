@@ -3,6 +3,7 @@
 * Optimize speed by always setting the `root` property
 * Optimize speed by removing the class member initializers
 * Optimize the clone methods
+* Store driers & undriers in a map instead of an object
 
 ## 2.0.0 (2023-01-14)
 
