@@ -1,4 +1,4 @@
-## 2.0.1 (WIP)
+## 2.0.1 (2023-01-23)
 
 * Optimize speed by always setting the `root` property
 * Optimize speed by removing the class member initializers
