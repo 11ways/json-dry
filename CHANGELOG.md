@@ -1,3 +1,7 @@
+## 2.0.2 (WIP)
+
+* Add `BigInt` support
+
 ## 2.0.1 (2023-01-23)
 
 * Optimize speed by always setting the `root` property
