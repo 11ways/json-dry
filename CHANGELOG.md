@@ -1,3 +1,7 @@
+## 2.0.3 (WIP)
+
+* Fix placeholders not being replaced in certain circular circumstances
+
 ## 2.0.2 (2023-10-05)
 
 * Add `BigInt` support
