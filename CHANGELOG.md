@@ -1,4 +1,4 @@
-## 2.0.3 (WIP)
+## 2.0.3 (2024-08-12)
 
 * Fix placeholders not being replaced in certain circular circumstances
 
